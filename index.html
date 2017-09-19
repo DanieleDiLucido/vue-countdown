@@ -1,0 +1,38 @@
+<html>
+    <body>
+        <div id="app">
+            <div v-if="!end">{{currentDateTime.hour}}:{{currentDateTime.minute}}:{{currentDateTime.second}}</div>
+            <div v-if="end">Pollo!</div>
+        </div>
+        <script src="script/vue.js"></script>
+        <script src="script/moment-min.js"></script>
+    </body>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: function () {
+                return {
+                    end:false,
+                    currentDateTime:{
+                        hour: "00",
+                        minute: "00",
+                        second: "00"
+                    },
+                    endDate: moment().add(8, 'second')
+                };
+            },
+            mounted:function(){
+                let interval = setInterval(()=>{
+                    if(this.endDate.unix()- moment().unix()<= 0){
+                        this.end = true;
+                        clearInterval(interval);
+                    }     
+                    this.currentDateTime.hour = moment(this.endDate.diff(moment())).utc().format("HH");
+                    this.currentDateTime.minute = moment(this.endDate.diff(moment())).utc().format("mm");
+                    this.currentDateTime.second = moment(this.endDate.diff(moment())).utc().format("ss");
+                },100);
+            }
+        })
+
+    </script>
+</html>
