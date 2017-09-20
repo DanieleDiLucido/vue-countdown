@@ -1,21 +1,13 @@
 <html>
     <body>
-        <div id="vue-countdown">
-            <div v-if="!end" class="timer">
-                <span id="hour">{{currentDateTime.hour}}</span>
-                <span id="minute">{{currentDateTime.minute}}</span>
-                <span id="second">{{currentDateTime.second}}</span>
-            </div>
-            <transition name="fade">
-                <span v-if="end">Ta daaaah!</span>        
-            </transition>
+        <div id="app">
+            <vue-countdown></vue-countdown>
         </div>
         <script src="script/vue.js"></script>
         <script src="script/moment-min.js"></script>
     </body>
     <script>
-        var app = new Vue({
-            el: '#vue-countdown',
+        Vue.component('vue-countdown', {
             data: function () {
                 return {
                     end:false,
@@ -42,23 +34,35 @@
                 }).catch((err)=>{
                     console.error(err);
                 })
-            }
+            },template: '<div id="vue-countdown-wrapper">'+
+                            '<div v-if="!end" class="timer">'+
+                                '<span id="hour">{{currentDateTime.hour}}</span>'+
+                                '<span id="minute">{{currentDateTime.minute}}</span>'+
+                                '<span id="second">{{currentDateTime.second}}</span>'+
+                            '</div>'+
+                            '<transition name="fade">'+
+                                '<span v-if="end">Ta daaaah!</span>'+
+                            '</transition>'+
+                        '</div>'
+        });
+        let app = new Vue({
+            el: '#app'
         })
     </script>
     <style>     
-        #vue-countdown{
+        #vue-countdown-wrapper{
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
-        #vue-countdown span{
+        #vue-countdown-wrapper span{
             padding: 40px 20px;
             color: lightslategray;
             font-size: 30px;
             font-family: lato;
         }
-        #vue-countdown .timer span {
+        #vue-countdown-wrapper .timer span {
             margin: 3px;
             border:solid 1px lightslategray;
             border-radius:6px;
