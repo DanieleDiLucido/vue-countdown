@@ -1,15 +1,19 @@
 <html>
     <body>
-        <div id="app">
-            <div v-if="!end">{{currentDateTime.hour}}:{{currentDateTime.minute}}:{{currentDateTime.second}}</div>
-            <div v-if="end">Pollo!</div>
+        <div id="vue-countdown">
+            <div v-if="!end" class="timer">
+                <span id="hour">{{currentDateTime.hour}}</span>
+                <span id="minute">{{currentDateTime.minute}}</span>
+                <span id="second">{{currentDateTime.second}}</span>
+            </div>
+            <span v-if="end">Ta daaaah!</span>
         </div>
         <script src="script/vue.js"></script>
         <script src="script/moment-min.js"></script>
     </body>
     <script>
         var app = new Vue({
-            el: '#app',
+            el: '#vue-countdown',
             data: function () {
                 return {
                     end:false,
@@ -18,21 +22,44 @@
                         minute: "00",
                         second: "00"
                     },
-                    endDate: moment().add(8, 'second')
+                    endDate: new Promise((resolve, reject)=>{
+                        resolve({date:moment().add(8, 'second')});
+                    })
                 };
-            },
-            mounted:function(){
-                let interval = setInterval(()=>{
-                    if(this.endDate.unix()- moment().unix()<= 0){
-                        this.end = true;
-                        clearInterval(interval);
-                    }     
-                    this.currentDateTime.hour = moment(this.endDate.diff(moment())).utc().format("HH");
-                    this.currentDateTime.minute = moment(this.endDate.diff(moment())).utc().format("mm");
-                    this.currentDateTime.second = moment(this.endDate.diff(moment())).utc().format("ss");
-                },100);
+            },mounted:function(){
+                this.endDate.then((response)=>{
+                    const interval = setInterval(()=>{
+                        if(response.date.unix()- moment().unix()<= 0){
+                            this.end = true;
+                            clearInterval(interval);
+                        }     
+                        this.currentDateTime.hour = moment(response.date.diff(moment())).utc().format("HH");
+                        this.currentDateTime.minute = moment(response.date.diff(moment())).utc().format("mm");
+                        this.currentDateTime.second = moment(response.date.diff(moment())).utc().format("ss");
+                    },100);
+                }).catch((err)=>{
+                    console.error(err);
+                })
             }
         })
-
     </script>
+    <style>     
+        #vue-countdown{
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #vue-countdown span{
+            padding: 40px 20px;
+            color: lightslategray;
+            font-size: 30px;
+            font-family: lato;
+        }
+        #vue-countdown .timer span {
+            margin: 3px;
+            border:solid 1px lightslategray;
+            border-radius:6px;
+        }
+    </style>
 </html>
