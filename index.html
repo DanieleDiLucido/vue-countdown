@@ -6,7 +6,9 @@
                 <span id="minute">{{currentDateTime.minute}}</span>
                 <span id="second">{{currentDateTime.second}}</span>
             </div>
-            <span v-if="end">Ta daaaah!</span>
+            <transition name="fade">
+                <span v-if="end">Ta daaaah!</span>        
+            </transition>
         </div>
         <script src="script/vue.js"></script>
         <script src="script/moment-min.js"></script>
@@ -60,6 +62,12 @@
             margin: 3px;
             border:solid 1px lightslategray;
             border-radius:6px;
+        }
+        .fade-enter-active{
+            transition: opacity 1s
+        }
+        .fade-enter{
+            opacity: 0
         }
     </style>
 </html>
