@@ -17,33 +17,38 @@
                         second: "00"
                     },
                     endDate: new Promise((resolve, reject)=>{
-                        resolve({date:moment().add(8, 'second')});
+                        const xhr = new XMLHttpRequest();
+                        xhr.open("GET", "https://rnd-future-date.herokuapp.com/getRndDate");
+                        xhr.onload = () => resolve(JSON.parse(xhr.responseText));
+                        xhr.onerror = () => reject(xhr.statusText);
+                        xhr.send();
                     })
                 };
             },mounted:function(){
                 this.endDate.then((response)=>{
                     const interval = setInterval(()=>{
-                        if(response.date.unix()- moment().unix()<= 0){
+                        const responseDate = moment(response.date);
+                        if(responseDate.isSameOrBefore(moment())){
                             this.end = true;
                             clearInterval(interval);
                         }     
-                        this.currentDateTime.hour = moment(response.date.diff(moment())).utc().format("HH");
-                        this.currentDateTime.minute = moment(response.date.diff(moment())).utc().format("mm");
-                        this.currentDateTime.second = moment(response.date.diff(moment())).utc().format("ss");
+                        this.currentDateTime.hour = moment(responseDate.diff(moment())).utc().format("HH");
+                        this.currentDateTime.minute = moment(responseDate.diff(moment())).utc().format("mm");
+                        this.currentDateTime.second = moment(responseDate.diff(moment())).utc().format("ss");
                     },100);
                 }).catch((err)=>{
                     console.error(err);
                 })
-            },template: '<div id="vue-countdown-wrapper">'+
-                            '<div v-if="!end" class="timer">'+
-                                '<span id="hour">{{currentDateTime.hour}}</span>'+
-                                '<span id="minute">{{currentDateTime.minute}}</span>'+
-                                '<span id="second">{{currentDateTime.second}}</span>'+
-                            '</div>'+
-                            '<transition name="fade">'+
-                                '<span v-if="end">Ta daaaah!</span>'+
-                            '</transition>'+
-                        '</div>'
+            },template: `<div id="vue-countdown-wrapper">
+                            <div v-if="!end" class="timer">
+                                <span id="hour">{{currentDateTime.hour}}</span>
+                                <span id="minute">{{currentDateTime.minute}}</span>
+                                <span id="second">{{currentDateTime.second}}</span>
+                            </div>
+                            <transition name="fade">
+                                <span v-if="end">Ta daaaah!</span>
+                            </transition>
+                        </div>`
         });
         let app = new Vue({
             el: '#app'
