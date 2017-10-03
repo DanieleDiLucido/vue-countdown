@@ -1,3 +1,3 @@
 # vue-countdown
-
- demo: https://spy-corinne-16610.netlify.com
+ NodeJS backend: https://github.com/DanieleDiLucido/rnd-future-date
+ Demo: https://spy-corinne-16610.netlify.com
